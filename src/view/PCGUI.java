@@ -26,6 +26,8 @@ public class PCGUI extends JFrame implements IPCGUI, ActionListener, ItemListene
     private JPanel proPanel;
     private JPanel conPanel;
     private JPanel functionsPanel;
+    private JPanel rateProPanel;
+    private JPanel rateConPanel;
 
     private JScrollPane mainScrollPane;
     private JScrollPane proScrollPane;
@@ -34,14 +36,6 @@ public class PCGUI extends JFrame implements IPCGUI, ActionListener, ItemListene
     private JTextField enterPro;
     private JTextField enterCon;
     private JTextField titleArea;
-
-//    private ArrayList<ITally> pros = new ArrayList<ITally>();
-//    private ArrayList<ITally> cons = new ArrayList<ITally>();
-
-//    private ArrayList<String> stringPros;
-//    private ArrayList<Integer> stringCons;
-//    private ArrayList<String> listOfConsNames;
-//    private ArrayList<Integer> listOfConsValues;
 
     private JList<String> listOfProSelect;
     private JList<String> listOfConSelect;
@@ -53,6 +47,12 @@ public class PCGUI extends JFrame implements IPCGUI, ActionListener, ItemListene
 
     private JButton changePC;
     private JButton deletePC;
+    private JButton oneProButton;
+    private JButton twoProButton;
+    private JButton threeProButton;
+    private JButton oneConButton;
+    private JButton twoConButton;
+    private JButton threeConButton;
 
     private int proSelectedInd;
     private int conSelectedInd;
@@ -115,16 +115,35 @@ public class PCGUI extends JFrame implements IPCGUI, ActionListener, ItemListene
         enterPro.addActionListener(this);
         enterPro.setActionCommand("enter new pro");
 
+        // The 1, 2, 3 buttons under the text field
+        rateProPanel = new JPanel();
+        oneProButton = new JButton("1");
+        oneProButton.addActionListener(this);
+        oneProButton.setActionCommand("pro value");
+
+        twoProButton = new JButton("2");
+        twoProButton.addActionListener(this);
+        twoProButton.setActionCommand("pro value");
+
+        threeProButton = new JButton("3");
+        threeProButton.addActionListener(this);
+        threeProButton.setActionCommand("pro value");
+
+        rateProPanel.add(oneProButton);
+        rateProPanel.add(twoProButton);
+        rateProPanel.add(threeProButton);
+
         prosString = new ArrayList<ITally>();
         this.ArrayIntoListModel(prosString, dataListOfPros);
         listOfProSelect = new JList<String>(dataListOfPros);
-        listOfProSelect.setSelectionMode(ListSelectionModel.SINGLE_INTERVAL_SELECTION);
+//        listOfProSelect.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         listOfProSelect.addListSelectionListener(this);
 
         proPanel.add(enterPro);
+        proPanel.add(rateProPanel);
         proPanel.add(listOfProSelect);
 
-        proConPanel.add(proPanel, BorderLayout.LINE_START);
+        proConPanel.add(proPanel);
 
         // Panel where the CONS of the decision are
         listOfConSelect = new JList<String>();
@@ -139,15 +158,34 @@ public class PCGUI extends JFrame implements IPCGUI, ActionListener, ItemListene
         enterCon.addActionListener(this);
         enterCon.setActionCommand("enter new con");
 
+        // The 1, 2, 3 buttons under the text field
+        rateConPanel = new JPanel();
+        oneConButton = new JButton("1");
+        oneConButton.addActionListener(this);
+        oneConButton.setActionCommand("con value");
+
+        twoConButton = new JButton("2");
+        twoConButton.addActionListener(this);
+        twoConButton.setActionCommand("con value");
+
+        threeConButton = new JButton("3");
+        threeConButton.addActionListener(this);
+        threeConButton.setActionCommand("con value");
+
+        rateConPanel.add(oneConButton);
+        rateConPanel.add(twoConButton);
+        rateConPanel.add(threeConButton);
+
         this.ArrayIntoListModel(consString, dataListOfCons);
         listOfConSelect = new JList<String>(dataListOfCons);
-        listOfConSelect.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+//        listOfConSelect.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         listOfConSelect.addListSelectionListener(this);
 
         conPanel.add(enterCon);
+        conPanel.add(rateConPanel);
         conPanel.add(listOfConSelect);
 
-        proConPanel.add(conPanel, BorderLayout.LINE_END);
+        proConPanel.add(conPanel);
 
         // Panel where other functions/tools are
         functionsPanel = new JPanel();
@@ -193,50 +231,32 @@ public class PCGUI extends JFrame implements IPCGUI, ActionListener, ItemListene
                 fileTitle = titleArea.getText();
                 setTitle(windowTitle + fileTitle);
                 break;
-            case "enter new pro":
+            case "pro value":
                 String proName = enterPro.getText();
-                Integer[] optionsPro = {1, 2, 3};
-                int n = JOptionPane.showOptionDialog(proPanel,
-                        "On a scale of 1-3, select a level of importance of this Pro: \"" +
-                                proName + "\" (1 is least important, 3 is most important)",
-                        "Importance Level",
-                        JOptionPane.YES_NO_CANCEL_OPTION,
-                        JOptionPane.QUESTION_MESSAGE,
-                        null,
-                        optionsPro,
-                        null);
-//                System.out.println(optionsPro[n]);
-//                pros.add(new ProsT(newId, proName, n + 1));
-//                String dots = "";
-//                for (int p = 0; p < proConCol - proName.length() - 1; p++) {
-//                    dots = dots + ".";
-//                }
-//                String proElement = proName + dots + Integer.toString(n + 1);
-                ITally tempPro = new ProsT(proName, optionsPro[n]);
+                int proVal;
+                ITally tempPro;
+                if (e.getSource().equals(oneProButton)) {
+                    tempPro = new ProsT(proName, 1);
+                } else if (e.getSource().equals(twoProButton)) {
+                    tempPro = new ProsT(proName, 2);
+                } else {
+                    tempPro = new ProsT(proName, 3);
+                }
                 prosString.add(tempPro);
                 dataListOfPros.addElement(tempPro.tallyToString(proConCol));
                 enterPro.setText("");
                 break;
-            case "enter new con":
+            case "con value":
                 String conName = enterCon.getText();
-                Integer[] optionsCon = {1, 2, 3};
-                int m = JOptionPane.showOptionDialog(proPanel,
-                        "On a scale of 1-3, select a level of importance of this Pro: \"" +
-                                conName + "\" (1 is least important, 3 is most important)",
-                        "Importance Level",
-                        JOptionPane.YES_NO_CANCEL_OPTION,
-                        JOptionPane.QUESTION_MESSAGE,
-                        null,
-                        optionsCon,
-                        null);
-//                System.out.println(optionsCon[m]);
-//                pros.add(new ProsT(newId, proName, n + 1));
-//                String dots = "";
-//                for (int p = 0; p < proConCol - proName.length() - 1; p++) {
-//                    dots = dots + ".";
-//                }
-//                String proElement = proName + dots + Integer.toString(n + 1);
-                ITally tempCon = new ProsT(conName, optionsCon[m]);
+                int conVal;
+                ITally tempCon;
+                if (e.getSource().equals(oneConButton)) {
+                    tempCon = new ConsT(conName, 1);
+                } else if (e.getSource().equals(twoConButton)) {
+                    tempCon = new ConsT(conName, 2);
+                } else {
+                    tempCon = new ConsT(conName, 3);
+                }
                 consString.add(tempCon);
                 dataListOfCons.addElement(tempCon.tallyToString(proConCol));
                 enterCon.setText("");
@@ -290,12 +310,10 @@ public class PCGUI extends JFrame implements IPCGUI, ActionListener, ItemListene
                     addInd = listOfProSelect.getSelectedIndex();
                     prosString.get(addInd).addSubWeight(true);
                     this.ArrayIntoListModel(prosString, dataListOfPros);
-                    listOfProSelect.setSelectedIndex(addInd);
                 } else {
                     addInd = listOfConSelect.getSelectedIndex();
                     consString.get(addInd).addSubWeight(true);
                     this.ArrayIntoListModel(consString, dataListOfCons);
-                    listOfConSelect.setSelectedIndex(addInd);
                 }
                 break;
             case "subtract one":
@@ -304,12 +322,10 @@ public class PCGUI extends JFrame implements IPCGUI, ActionListener, ItemListene
                     subInd = listOfProSelect.getSelectedIndex();
                     prosString.get(subInd).addSubWeight(false);
                     this.ArrayIntoListModel(prosString, dataListOfPros);
-                    listOfProSelect.setSelectedIndex(subInd);
                 } else {
                     subInd = listOfConSelect.getSelectedIndex();
                     consString.get(subInd).addSubWeight(false);
                     this.ArrayIntoListModel(consString, dataListOfCons);
-                    listOfConSelect.setSelectedIndex(subInd);
                 }
                 break;
         }
@@ -399,7 +415,6 @@ public class PCGUI extends JFrame implements IPCGUI, ActionListener, ItemListene
             temp = currName + dots + Integer.toString(currVal);
             listOfString.addElement(temp);
         }
-        //        return tempList;
     }
 }
 
